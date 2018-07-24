@@ -32,11 +32,25 @@
             background-size: cover;
             background-position: center;
         }
+
+        div.cherry {
+            background: url("cherry.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+
+        div.gosh {
+            background: url("gosh1.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
         
         div.empty {}
         
         div#pacman {
-            background: url("pacman.gif");
+            background: url("pacman_right.gif");
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
@@ -46,15 +60,17 @@
         }
 
         .score{
-            width: 390px;
+            width: 600px;
             height: 60px;;
+            margin-left: 160px;
             border: 5px solid blue;
         }
 
         .score p{
+            display: inline-block;
             color: white;
             font-size: 25px;
-            margin: 14px 10px;;
+            margin: 14px 50px 14px 20px;
         }
     </style>
 </head>
@@ -65,37 +81,42 @@
         <div id="pacman"></div>
 
        <div class="score">
-            <p id="countCoint">Coints Eaten: 0</p>
+            <p id="countCoint">Coins Eaten: 0</p>
+            <p id="cherryCoint">Cherries Eaten: 0pts</p>
        </div>
     </div>
-
     <script>
         var world = [
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2], 
-        [2, 0, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], 
+        [2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2], 
+        [2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 3, 3, 3, 1, 2, 1, 1, 2, 1, 1, 1, 2], 
+        [2, 2, 2, 1, 2, 1, 1, 1, 2, 4, 2, 2, 2, 2, 1, 2, 3, 3, 1, 1, 2, 2, 2], 
+        [2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 2], 
+        [2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2], 
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
     ];
 
     var worldDict = {
         0: "empty",
         1: "coin",
-        2: "brick"
-    }
+        2: "brick",
+        3: "cherry",
+        4: "gosh"
+    };
     var pacman = {
         x: 1,
         y: 1
     };
 
+
     var leftValue = topValue = 40;
     var myWold = document.getElementById('world');
     var myPacman = document.getElementById('pacman');
-    var count = 0;
+    var coinCount = cherryCount = 0;
+    var pacmanLifes = 3;
+
     // console.dir(document) => to see all document property
     function displayWorld(){
         var output = "";
@@ -120,27 +141,54 @@
 
     document.onkeydown = function(e){
         console.log(e.keyCode);
-        if(e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2){ // Up Arrow Clicked
-            pacman.y--;
-            isCointEaten();
-        } else if(e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2){ // Down Arrow Clicked
-            pacman.y++;
-            isCointEaten();
-        } else if(e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2){ // Right Arrow Clicked
-            pacman.x++;
-            isCointEaten();
-        } else if(e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2){ // Left Arrow Clicked
-            pacman.x--;
-            isCointEaten();
+        if(e.keyCode == 38){ // Up Arrow Clicked
+            myPacman.style.backgroundImage = "url('pacman_up.gif')";
+            if(world[pacman.y - 1][pacman.x] != 2){
+                pacman.y--;
+                isCointEaten();
+            } 
+
+        } else if(e.keyCode == 40){ // Down Arrow Clicked
+            myPacman.style.backgroundImage = "url('pacman_down.gif')";
+            if(world[pacman.y + 1][pacman.x] != 2){
+                pacman.y++;
+                isCointEaten();
+                console.log(pacman);
+            } 
+
+        } else if(e.keyCode == 39){ // Right Arrow Clicked
+            myPacman.style.backgroundImage = "url('pacman_right.gif')";
+            if(world[pacman.y][pacman.x + 1] != 2){
+                pacman.x++;
+                isCointEaten();
+            }
+            
+        } else if(e.keyCode == 37){ // Left Arrow Clicked
+            myPacman.style.backgroundImage = "url('pacman_left.gif')";
+            if( world[pacman.y][pacman.x - 1] != 2){
+                pacman.x--;
+                isCointEaten();
+            }
         }
         displayPacman(); // display pacman once position is changed
     }
 
     function isCointEaten(){
-        if(world[pacman.y][pacman.x] == 1){
+        if(world[pacman.y][pacman.x] == 1){ // pacman eats a coin
             world[pacman.y][pacman.x] = 0;
-            count++;
-            document.getElementById('countCoint').innerHTML = "Coints Eaten: "+count;
+            coinCount++;
+            document.getElementById('countCoint').innerHTML = "Coins Eaten: "+coinCount;
+
+        } else if(world[pacman.y][pacman.x] == 3){ // pacman eats a cherry
+            world[pacman.y][pacman.x] = 0;
+            cherryCount += 50;
+            document.getElementById('cherryCoint').innerHTML = "Cherries Eaten: " +cherryCount+ "pts";
+
+        } else if(world[pacman.y][pacman.x] == 4){ // gosh catch pacman
+
+            alert("Ohh nooo Pacman Die!!!!");
+            pacman.y = 1;
+            pacman.x = 1;
         }
         displayWorld();
     }
