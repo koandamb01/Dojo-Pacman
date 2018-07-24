@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pacman Demo</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+            font-size: 0px;
+        }
+        body {
+            background-color: black;
+        }
+        
+        div.row div {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+        }
+        
+        div.brick {
+            background-color: blue;
+        }
+        
+        div.coin {
+            background: url("coin.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        div.empty {}
+        
+        div#pacman {
+            background: url("pacman.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            width: 40px;
+            height: 40px;
+            position: absolute;
+        }
+
+        .score{
+            width: 390px;
+            height: 60px;;
+            border: 5px solid blue;
+        }
+
+        .score p{
+            color: white;
+            font-size: 25px;
+            margin: 14px 10px;;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="world"></div>
+        <div id="pacman"></div>
+
+       <div class="score">
+            <p id="countCoint">Coints Eaten: 0</p>
+       </div>
+    </div>
+
+    <script>
+        var world = [
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2], 
+        [2, 0, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], 
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+    ];
+
+    var worldDict = {
+        0: "empty",
+        1: "coin",
+        2: "brick"
+    }
+    var pacman = {
+        x: 1,
+        y: 1
+    };
+
+    var leftValue = topValue = 40;
+    var myWold = document.getElementById('world');
+    var myPacman = document.getElementById('pacman');
+    var count = 0;
+    // console.dir(document) => to see all document property
+    function displayWorld(){
+        var output = "";
+        for(var i = 0; i < world.length; i++){
+            output += "<div class='row'>";
+            for(var j = 0; j < world[i].length; j++){
+                output += "<div class='" + worldDict[world[i][j]]+ "'></div>";
+            }
+            output += "</div>";
+        }
+        // console.log(output);
+        myWold.innerHTML = output;
+    }
+    displayWorld();
+
+    function displayPacman(){
+        myPacman.style.top = pacman.y * topValue + "px";
+        myPacman.style.left = pacman.x * leftValue + "px";
+    }
+
+    displayPacman();
+
+    document.onkeydown = function(e){
+        console.log(e.keyCode);
+        if(e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2){ // Up Arrow Clicked
+            pacman.y--;
+            isCointEaten();
+        } else if(e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2){ // Down Arrow Clicked
+            pacman.y++;
+            isCointEaten();
+        } else if(e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2){ // Right Arrow Clicked
+            pacman.x++;
+            isCointEaten();
+        } else if(e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2){ // Left Arrow Clicked
+            pacman.x--;
+            isCointEaten();
+        }
+        displayPacman(); // display pacman once position is changed
+    }
+
+    function isCointEaten(){
+        if(world[pacman.y][pacman.x] == 1){
+            world[pacman.y][pacman.x] = 0;
+            count++;
+            document.getElementById('countCoint').innerHTML = "Coints Eaten: "+count;
+        }
+        displayWorld();
+    }
+    </script>
+</body>
+
+</html>
